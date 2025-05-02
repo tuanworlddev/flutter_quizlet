@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.signInWithGoogle();
     if (authProvider.user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     }
   }
 
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (authProvider.user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     } else {
       ScaffoldMessenger.of(
         context,
@@ -111,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 textInputAction: TextInputAction.done,
+                onSubmitted: (_) => {if (isValid) signInWithEmailAndPassword()},
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.password),

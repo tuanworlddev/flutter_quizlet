@@ -70,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await authProvider.signInWithGoogle();
 
     if (authProvider.user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     }
   }
 

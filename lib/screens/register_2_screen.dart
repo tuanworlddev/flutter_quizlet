@@ -55,7 +55,7 @@ class _Register2ScreenState extends State<Register2Screen> {
     });
 
     if (authProvider.user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     } else {
       ScaffoldMessenger.of(
         context,

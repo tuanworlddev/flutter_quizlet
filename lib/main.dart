@@ -2,10 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/firebase_options.dart';
 import 'package:flutter_quizlet/providers/auth_provider.dart';
-import 'package:flutter_quizlet/screens/home_screen.dart';
 import 'package:flutter_quizlet/screens/login_screen.dart';
+import 'package:flutter_quizlet/screens/main_screen.dart';
 import 'package:flutter_quizlet/screens/register_2_screen.dart';
 import 'package:flutter_quizlet/screens/register_screen.dart';
+import 'package:flutter_quizlet/screens/splash_screen%20.dart';
 import 'package:flutter_quizlet/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +35,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const WelcomeScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/': (context) => const SplashScreen(),
+        '/welcome': (context) => const WelcomeScreen(),
+        '/main': (context) => const MainScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/register2': (context) => const Register2Screen(),
