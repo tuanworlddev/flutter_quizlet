@@ -39,17 +39,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    final valid =
-        name.isNotEmpty &&
+    final valid = name.isNotEmpty &&
         email.isNotEmpty &&
         password.isNotEmpty &&
         password.length >= 6 &&
         emailRegex.hasMatch(email);
 
     if (isValid != valid) {
-      setState(() {
-        isValid = valid;
-      });
+      setState(() => isValid = valid);
     }
   }
 
@@ -68,7 +65,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> signIntWithGoogle() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.signInWithGoogle();
-
     if (authProvider.user != null) {
       Navigator.pushReplacementNamed(context, '/main');
     }
@@ -77,93 +73,119 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Sign Up',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 40),
+            SvgPicture.asset('assets/images/google.svg', height: 64),
+            const SizedBox(height: 16),
+            Text(
+              'Create Your Account',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+
+            // Name
+            TextField(
+              controller: _displayNameController,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                labelText: 'Display name',
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _displayNameController,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                  hintText: 'Enter display name',
-                ),
+            ),
+            const SizedBox(height: 20),
+
+            // Email
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                labelText: 'Email address',
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                  hintText: 'Enter email address',
-                ),
+            ),
+            const SizedBox(height: 20),
+
+            // Password
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.password),
-                  hintText: 'Enter your password',
-                ),
-              ),
-              const SizedBox(height: 20),
-              FilledButton(
+            ),
+            const SizedBox(height: 24),
+
+            // Continue Button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FilledButton(
                 onPressed: isValid ? nextRegisterScreen : null,
-                style: FilledButton.styleFrom(fixedSize: Size.fromHeight(50)),
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     Text('Continue'),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Icon(Icons.navigate_next),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Text('Or', style: TextStyle(color: Colors.grey, fontSize: 16)),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("You have an account? "),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: Text('Sign in'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              OutlinedButton(
+            ),
+
+            const SizedBox(height: 24),
+            Text('Or', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+            const SizedBox(height: 16),
+
+            // Google Sign-In
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
                 onPressed: signIntWithGoogle,
-                style: OutlinedButton.styleFrom(fixedSize: Size.fromHeight(50)),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/images/google.svg'),
+                    SvgPicture.asset('assets/images/google.svg', height: 20),
                     const SizedBox(width: 10),
-                    Text('Sign in with Google'),
+                    const Text('Sign in with Google'),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Already have an account?
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Already have an account?", style: TextStyle(color: Colors.grey[700])),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                  child: const Text('Sign in'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
