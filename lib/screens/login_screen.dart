@@ -33,19 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
   void _validateForm() {
     final email = _emailController.text;
     final password = _passwordController.text;
-
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    final valid =
-        email.isNotEmpty &&
+    final valid = email.isNotEmpty &&
         emailRegex.hasMatch(email) &&
         password.isNotEmpty &&
         password.length >= 6;
 
     if (isValid != valid) {
-      setState(() {
-        isValid = valid;
-      });
+      setState(() => isValid = valid);
     }
   }
 
@@ -58,119 +54,131 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> signInWithEmailAndPassword() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-
+    setState(() => loading = true);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.signInWithEmailAndPassword(
-      email: email,
-      password: password,
+      email: _emailController.text,
+      password: _passwordController.text,
     );
-
-    setState(() {
-      loading = false;
-    });
+    setState(() => loading = false);
 
     if (authProvider.user != null) {
       Navigator.pushReplacementNamed(context, '/main');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to sign in')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign in')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Welcome Back Quizlet', style: TextStyle(fontSize: 30)),
-              const SizedBox(height: 30),
-              Text('Sign in', style: TextStyle(fontSize: 24)),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                  hintText: 'Enter email address',
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 40),
+            // Logo or Icon
+            SvgPicture.asset('assets/images/google.svg', height: 64),
+            const SizedBox(height: 16),
+            Text(
+              'Welcome Back Quizlet',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Sign in to continue',
+              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            ),
+            const SizedBox(height: 32),
+
+            // Email Input
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Password Input
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => {if (isValid) signInWithEmailAndPassword()},
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Login Button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FilledButton(
+                onPressed: isValid && !loading ? signInWithEmailAndPassword : null,
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
+                child: loading
+                    ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                    : const Text('Login'),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => {if (isValid) signInWithEmailAndPassword()},
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.password),
-                  hintText: 'Enter your password',
-                ),
-              ),
-              const SizedBox(height: 20),
-              FilledButton(
-                onPressed:
-                    isValid && !loading ? signInWithEmailAndPassword : null,
-                style: FilledButton.styleFrom(fixedSize: Size.fromHeight(50)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (loading)
-                      SizedBox(
-                        width: 24.0,
-                        height: 24.0,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2.0,
-                        ),
-                      ),
-                    const SizedBox(width: 10),
-                    Text('Login'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text('Or', style: TextStyle(color: Colors.grey, fontSize: 16)),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("You don't have an account? "),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/register');
-                    },
-                    child: Text('Sign up'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              OutlinedButton(
+            ),
+            const SizedBox(height: 24),
+
+            Text('Or', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+            const SizedBox(height: 16),
+
+            // Google Sign-In
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
                 onPressed: signIntWithGoogle,
-                style: OutlinedButton.styleFrom(fixedSize: Size.fromHeight(50)),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/images/google.svg'),
+                    SvgPicture.asset('assets/images/google.svg', height: 20),
                     const SizedBox(width: 10),
-                    Text('Sign in with Google'),
+                    const Text('Sign in with Google'),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Sign Up Redirect
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Don’t have an account?", style: TextStyle(color: Colors.grey[700])),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
+                  child: const Text('Sign up'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

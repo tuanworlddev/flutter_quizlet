@@ -26,22 +26,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Quizlet',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
-          ),
+    return SafeArea(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Quizlet',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.white,
+            ),
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/welcome': (context) => const WelcomeScreen(),
+          '/main': (context) => const MainScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterScreen(),
+          '/register2': (context) => const Register2Screen(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/welcome': (context) => const WelcomeScreen(),
-        '/main': (context) => const MainScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/register2': (context) => const Register2Screen(),
-      },
     );
   }
 }

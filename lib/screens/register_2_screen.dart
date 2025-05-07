@@ -19,9 +19,7 @@ class _Register2ScreenState extends State<Register2Screen> {
 
   Future<void> selectImage() async {
     final picker = ImagePicker();
-    final XFile? pickedImage = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {
@@ -32,15 +30,12 @@ class _Register2ScreenState extends State<Register2Screen> {
   }
 
   Future<void> signUp() async {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final email = args['email'] as String;
     final password = args['password'] as String;
     final displayName = args['displayName'] as String;
 
-    setState(() {
-      loading = true;
-    });
+    setState(() => loading = true);
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.signUpWithEmail(
@@ -50,72 +45,78 @@ class _Register2ScreenState extends State<Register2Screen> {
       photo: imageSelected!,
     );
 
-    setState(() {
-      loading = false;
-    });
+    setState(() => loading = false);
 
     if (authProvider.user != null) {
       Navigator.pushReplacementNamed(context, '/main');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to sign up')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign up')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Upload Avatar',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            const SizedBox(height: 32),
+            Text(
+              'Upload Your Avatar',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+
+            // Avatar
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
               ),
-              const SizedBox(height: 30),
-              CircleAvatar(
-                radius: 120,
-                backgroundColor: Colors.grey.shade300,
-                backgroundImage:
-                    imageSelected != null ? FileImage(imageSelected!) : null,
-                child:
-                    imageSelected == null
-                        ? Icon(Icons.person, size: 120, color: Colors.white70)
-                        : null,
+              child: CircleAvatar(
+                radius: 80,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: imageSelected != null ? FileImage(imageSelected!) : null,
+                child: imageSelected == null
+                    ? Icon(Icons.person, size: 80, color: Colors.white70)
+                    : null,
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: selectImage,
-                child: Text('Select Image'),
+            ),
+            const SizedBox(height: 20),
+
+            // Select image
+            OutlinedButton.icon(
+              onPressed: selectImage,
+              icon: Icon(Icons.image_outlined),
+              label: Text('Choose Image'),
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              const SizedBox(height: 30),
-              FilledButton(
+            ),
+
+            const SizedBox(height: 40),
+
+            // Sign Up Button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FilledButton(
                 onPressed: isValid && !loading ? signUp : null,
-                style: FilledButton.styleFrom(fixedSize: Size.fromHeight(50)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (loading)
-                      SizedBox(
-                        width: 24.0,
-                        height: 24.0,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2.0,
-                        ),
-                      ),
-                    const SizedBox(width: 10),
-                    Text('Sign Up'),
-                  ],
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
+                child: loading
+                    ? CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                    : const Text('Sign Up'),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );
