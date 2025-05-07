@@ -44,7 +44,7 @@ class AuthService {
     try {
       final UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       await userCredential.user?.updateDisplayName(displayName);
-      final String? photoUrl = await uploadService.uploadFile(photo);
+      final String? photoUrl = await uploadService.uploadImage(photo);
       if (photoUrl != null) {
         await userCredential.user?.updatePhotoURL(photoUrl);
       }
