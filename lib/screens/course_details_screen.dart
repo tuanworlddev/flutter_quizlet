@@ -9,21 +9,22 @@ class CourseDetailsScreen extends StatefulWidget {
   const CourseDetailsScreen({super.key, required this.course});
 
   @override
-  State<StatefulWidget> createState() => _CourseDetailsScreenState();
+  State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
 }
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
-  final PageController _pageController = PageController(viewportFraction: 0.8);
+  final PageController _pageController = PageController(viewportFraction: 0.85);
   int _currentPage = 0;
-  Map<int, FlipCardController> _flipControllers = {};
+  late Map<int, FlipCardController> _flipControllers;
 
   @override
   void initState() {
     super.initState();
     Provider.of<HistoryProvider>(context, listen: false).createHistory(widget.course.id);
-    for (int i = 0; i < widget.course.flashcards.length; i++) {
-      _flipControllers[i] = FlipCardController();
-    }
+    _flipControllers = {
+      for (int i = 0; i < widget.course.flashcards.length; i++)
+        i: FlipCardController()
+    };
 
     _pageController.addListener(() {
       setState(() {
@@ -41,133 +42,137 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final flashcards = widget.course.flashcards;
+    final course = widget.course;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Course Details'), centerTitle: true),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
+      appBar: AppBar(
+        title: const Text('Course Details'),
+        centerTitle: true,
+        
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 260,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: flashcards.length,
+                itemBuilder: (context, index) {
+                  final flashcard = flashcards[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: FlipCard(
+                        onTapFlipping: true,
+                      controller: _flipControllers[index]!,
+                      rotateSide: RotateSide.left,
+                      axis: FlipAxis.vertical,
+                      animationDuration: const Duration(milliseconds: 300),
+                      frontWidget: buildCardSide(flashcard.front),
+                      backWidget: buildCardSide(flashcard.back),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                '${_currentPage + 1} / ${flashcards.length}',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            Text(
+              course.title,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage('https://avatar.iran.liara.run/public/24'),
+                ),
+                const SizedBox(width: 10),
+                 Text('User Quizlet', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Spacer(),
+                
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // 📄 Description
+            const Text('Description',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text(
+              course.description.isNotEmpty
+                  ? course.description
+                  : 'No description provided.',
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+            const SizedBox(height: 24),
+            Row(
               children: [
                 Expanded(
-                  child: Text(
-                    widget.course.title,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.lightbulb_outline),
+                    label: const Text('Learn'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple.shade100,
+                      foregroundColor: Colors.deepPurple.shade800,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
-                Text(
-                  '${_currentPage + 1} / ${flashcards.length}',
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.quiz_outlined),
+                    label: const Text('Test'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 250,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: flashcards.length,
-              itemBuilder: (context, index) {
-                final flashcard = flashcards[index];
-                final controller = _flipControllers[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 2,
-                  ),
-                  child: FlipCard(
-                    frontWidget: buildCardSide(
-                      flashcard.front,
-                      flashcard.imageUrl,
-                      flashcard.audioUrl,
-                    ),
-                    backWidget: buildCardSide(flashcard.back, null, null),
-                    controller: controller!,
-                    rotateSide: RotateSide.left,
-                    axis: FlipAxis.vertical,
-                    onTapFlipping: true,
-                    animationDuration: Duration(milliseconds: 300),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 16,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Category: ',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      widget.course.category,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.cyan,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-
-                Text(
-                  'Description:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                Text(
-                  widget.course.description,
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildCardSide(String content, String? imageUrl, String? audioUrl) {
-    return SizedBox(
-      height: 250,
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: Colors.cyan,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                content,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
+  Widget buildCardSide(String content) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: Colors.cyan,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            content,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
+
 }
