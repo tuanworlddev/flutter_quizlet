@@ -1,31 +1,39 @@
 import 'package:flutter/material.dart';
 
 IconData getCategoryIcon(String category) {
-  switch (category.toLowerCase()) {
-    case 'language':
+  switch (category) {
+    case 'Languages':
       return Icons.language;
-    case 'code':
-      return Icons.flutter_dash;
-    case 'science':
-      return Icons.science_outlined;
-    case 'math':
-      return Icons.calculate_outlined;
+    case 'Science':
+      return Icons.science;
+    case 'Arts and Humanities':
+      return Icons.palette;
+    case 'Maths':
+      return Icons.calculate;
+    case 'Social sciences':
+      return Icons.groups_2;
+    case 'General':
+      return Icons.school;
     default:
-      return Icons.book_outlined; // fallback icon
+      return Icons.book;
   }
 }
 
-String getCategoryName(String category) {
-  switch (category.toLowerCase()) {
-    case 'language':
-      return 'Language';
-    case 'code':
-      return 'Programming';
-    case 'science':
-      return 'Science';
-    case 'math':
-      return 'Mathematics';
+Color getCategoryColor(String category) {
+  switch (category) {
+    case 'Languages':
+      return Colors.blue;
+    case 'Science':
+      return Colors.green;
+    case 'Arts and Humanities':
+      return Colors.purple;
+    case 'Maths':
+      return Colors.orange;
+    case 'Social sciences':
+      return Colors.teal;
+    case 'General':
+      return Colors.grey;
     default:
-      return 'General';
+      return Colors.black38;
   }
 }

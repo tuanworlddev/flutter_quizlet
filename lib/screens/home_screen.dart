@@ -5,6 +5,7 @@ import 'package:flutter_quizlet/providers/home_provider.dart';
 import 'package:flutter_quizlet/screens/course_details_screen.dart';
 import 'package:flutter_quizlet/screens/search_course_screen.dart';
 import 'package:flutter_quizlet/screens/your_library_screen.dart';
+import 'package:flutter_quizlet/util/category_icons.dart';
 import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:provider/provider.dart';
 
@@ -186,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // 🧠 List of Courses
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 250, // Chiều cao item (tuỳ chỉnh theo design của bạn)
+              height: 180, // Chiều cao item (tuỳ chỉnh theo design của bạn)
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: top5NewCoures.length,
@@ -243,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 250, // Chiều cao item (tuỳ chỉnh theo design của bạn)
+              height: 180, // Chiều cao item (tuỳ chỉnh theo design của bạn)
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: languageCourses.length,
@@ -300,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 250, // Chiều cao item (tuỳ chỉnh theo design của bạn)
+              height: 180, // Chiều cao item (tuỳ chỉnh theo design của bạn)
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: scienceCourses.length,
@@ -355,29 +356,51 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) =>
-                                      SearchCourseScreen(searchKeyword: null),
+                                  (context) => SearchCourseScreen(
+                                    searchKeyword: category,
+                                  ),
                             ),
                           );
                         },
                         child: Container(
-                          width: 100,
-                          height: 100,
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.all(16),
+                          width: 110,
+                          height: 110,
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.blueAccent),
-                          ),
-                          child: Text(
-                            category,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue[900],
-                              fontWeight: FontWeight.w500,
+                            color: getCategoryColor(category).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: getCategoryColor(
+                                category,
+                              ).withOpacity(0.3),
                             ),
-                            textAlign: TextAlign.center,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 4,
+                                offset: Offset(1, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                getCategoryIcon(category),
+                                color: getCategoryColor(category),
+                                size: 30,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                category,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );

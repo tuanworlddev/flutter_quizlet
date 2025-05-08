@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/models/custom_user.dart';
 import 'package:flutter_quizlet/providers/user_provider.dart';
+import 'package:flutter_quizlet/util/category_icons.dart';
 import 'package:provider/provider.dart';
 
 class CourseItem extends StatefulWidget {
@@ -10,7 +11,7 @@ class CourseItem extends StatefulWidget {
   const CourseItem({super.key, required this.course});
 
   @override
-  State<StatefulWidget> createState() => _CourseItemState();
+  State<CourseItem> createState() => _CourseItemState();
 }
 
 class _CourseItemState extends State<CourseItem> {
@@ -25,9 +26,9 @@ class _CourseItemState extends State<CourseItem> {
   void _fetchUser() async {
     final user = await Provider.of<UserProvider>(
       context,
-      listen: false
+      listen: false,
     ).getUserById(widget.course.userId);
-    if (user != null) {
+    if (mounted && user != null) {
       setState(() {
         _user = user;
       });
@@ -36,78 +37,111 @@ class _CourseItemState extends State<CourseItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.cyan, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        color: Colors.cyan.shade100,
-        child: Container(
-          height: 250,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 4,
-                  children: [
-                    Text(
-                      widget.course.title,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+    final course = widget.course;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    course.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+
+                  Row(
+                    children: [
+                      Text(
+                        '${course.flashcards.length} flashcards',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
-                      maxLines: 2,
-                    ),
-                    Text(
-                      '${widget.course.flashcards.length} terms',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(width: 8),
+                      const Text(
+                        '•',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
-                    ),
-                    Text(
-                      'Category: ${widget.course.category}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(width: 8),
+                      Text(
+                        course.category,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade700,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  if (_user != null)
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundImage:
+                              _user != null && _user!.photoURL != null
+                                  ? NetworkImage(_user!.photoURL!)
+                                  : const NetworkImage(
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnCj60zcZPmoHzt4YFKnxfaSCAO_bwXNjskiDX_ahOHXoJnqL8B6MUtddnul2cMpyBoWM&usqp=CAU',
+                                  ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _user!.displayName.isNotEmpty
+                                ? _user!.displayName
+                                : 'User Quizlet',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundImage: const NetworkImage(
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnCj60zcZPmoHzt4YFKnxfaSCAO_bwXNjskiDX_ahOHXoJnqL8B6MUtddnul2cMpyBoWM&usqp=CAU',
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            'User Quizlet',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      widget.course.description,
-                      style: TextStyle(color: Colors.black87, fontSize: 16),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              if (_user != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  spacing: 16,
-                  children: [
-                    if (_user!.photoURL != null)
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(_user!.photoURL!),
-                      ),
-                    Text(
-                      _user!.displayName,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
