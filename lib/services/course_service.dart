@@ -12,6 +12,14 @@ class CourseService {
     }
   }
 
+  Future<void> deleteCourse(String courseId) async {
+    try {
+      await _firestore.collection('courses').doc(courseId).delete();
+    } catch (e) {
+      throw Exception('Failed to delete course: $e');
+    }
+  }
+
   Stream<List<CourseModel>> streamCourseByUser(String userId) {
     return _firestore
         .collection('courses')

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/screens/edit_course_screen.dart';
+import 'package:flutter_quizlet/services/course_service.dart';
 
 class YourFlashcardPreviewScreen extends StatefulWidget {
   final CourseModel course;
@@ -13,9 +14,10 @@ class YourFlashcardPreviewScreen extends StatefulWidget {
 
 class _YourFlashcardPreviewScreenState
     extends State<YourFlashcardPreviewScreen> {
+  final _courseService = CourseService();
   final PageController _pageController = PageController(viewportFraction: 0.8);
   int _currentPage = 0;
-  Map<int, FlipCardController> _flipControllers = {};
+  final Map<int, FlipCardController> _flipControllers = {};
 
   @override
   void initState() {
@@ -49,110 +51,156 @@ class _YourFlashcardPreviewScreenState
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => EditCourseScreen(course: widget.course)));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditCourseScreen(course: widget.course),
+                ),
+              );
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('Edit'), Icon(Icons.chevron_right)],
-            ),
+            child: Row(children: [Text('Edit'), Icon(Icons.chevron_right)]),
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.course.title,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.course.title,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${_currentPage + 1} / ${flashcards.length}',
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 250,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: flashcards.length,
+                itemBuilder: (context, index) {
+                  final flashcard = flashcards[index];
+                  final controller = _flipControllers[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: FlipCard(
+                      frontWidget: buildCardSide(
+                        flashcard.front,
+                        flashcard.imageUrl,
+                        flashcard.audioUrl,
+                      ),
+                      backWidget: buildCardSide(flashcard.back, null, null),
+                      controller: controller!,
+                      rotateSide: RotateSide.left,
+                      axis: FlipAxis.vertical,
+                      onTapFlipping: true,
+                      animationDuration: Duration(milliseconds: 300),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Category: ',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        widget.course.category,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.cyan,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Description:',
                     style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.black,
+                      fontSize: 20,
+                      color: Colors.grey.shade600,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                Text(
-                  '$_currentPage / ${flashcards.length}',
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 250,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: flashcards.length,
-              itemBuilder: (context, index) {
-                final flashcard = flashcards[index];
-                final controller = _flipControllers[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 2,
+                  SizedBox(height: 8),
+                  Text(
+                    widget.course.description,
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   ),
-                  child: FlipCard(
-                    frontWidget: buildCardSide(
-                      flashcard.front,
-                      flashcard.imageUrl,
-                      flashcard.audioUrl,
-                    ),
-                    backWidget: buildCardSide(flashcard.back, null, null),
-                    controller: controller!,
-                    rotateSide: RotateSide.left,
-                    axis: FlipAxis.vertical,
-                    onTapFlipping: true,
-                    animationDuration: Duration(milliseconds: 300),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 16,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Category: ',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      widget.course.category,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.cyan,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                  SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: Text('Confirm Delete'),
+                              content: Text(
+                                'Are you sure you want to delete this course?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(true),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
 
-                Text(
-                  'Description:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.bold,
+                      if (confirmed == true) {
+                        await _courseService.deleteCourse(widget.course.id);
+                        if (mounted) Navigator.pop(context);
+                      }
+                    },
+                    style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete),
+                        SizedBox(width: 8),
+                        Text('Delete'),
+                      ],
+                    ),
                   ),
-                ),
-
-                Text(
-                  widget.course.description,
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 16),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

@@ -18,11 +18,15 @@ class EditCourseProvider with ChangeNotifier {
 
   void setCourse(CourseModel course) {
     _course = course;
-    notifyListeners();
   }
 
   void addFlashCard(FlashcardModel flashcard) {
     _course.flashcards.add(flashcard);
+    notifyListeners();
+  }
+
+  void changeCourse(CourseModel course) {
+    _course = course;
     notifyListeners();
   }
 
@@ -89,31 +93,13 @@ class EditCourseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateCourse(
-    String id,
-    String title,
-    String category,
-    String description,
-  ) async {
+  Future<void> updateCourse() async {
     try {
       final User? currentUser = await _authService.getCurrentUser();
       if (currentUser == null) return;
 
-      await _uploadFiles();
+      await _courseService.createCourse(_course);
 
-      CourseModel course = CourseModel(
-        id: id,
-        userId: currentUser.uid,
-        title: title,
-        category: category,
-        description: description,
-        createdAt: DateTime.now(),
-        flashcards: _course.flashcards,
-      );
-
-      await _courseService.createCourse(course);
-
-      _course.flashcards.clear();
       notifyListeners();
     } catch (e) {
       print(e);

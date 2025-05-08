@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
-import 'package:flutter_flip_card/flipcard/flip_card.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
-import 'package:flutter_quizlet/models/flashcard_model.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final CourseModel course;
