@@ -42,8 +42,11 @@ class _CreateFlashcardScreenState extends State<CreateFlashcardScreen> {
       setState(() {
         _isUploading = false;
       });
-      Navigator.pop(context);
-      Navigator.pop(context);
+      // BỎ BỚT 1 CONTEXT
+      Navigator.pushReplacementNamed(context, '/main');
+      // CHUYỂN VỀ MAIN
+      // Navigator.pop(context);
+      // Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -106,7 +109,7 @@ class _CreateFlashcardScreenState extends State<CreateFlashcardScreen> {
               children: [
                 if (_isUploading)
                   CircularProgressIndicator(),
-                Text('Finis'),
+                Text('Finish'),
               ],
             ),
           ),

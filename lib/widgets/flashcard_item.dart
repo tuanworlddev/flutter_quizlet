@@ -147,36 +147,36 @@ class _FlashcardItemState extends State<FlashcardItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FilledButton.tonalIcon(
-                  onPressed: _pickImage,
-                  icon: const Icon(Icons.image, size: 20),
-                  label: const SizedBox.shrink(),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.all(12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                FilledButton.tonalIcon(
-                  onPressed: _pickFile,
-                  icon: const Icon(Icons.keyboard_voice, size: 20),
-                  label: const SizedBox.shrink(),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.all(12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                FilledButton.tonalIcon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.remove_red_eye, size: 20),
-                  label: const SizedBox.shrink(),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.all(12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                const SizedBox(width: 8),
+                // FilledButton.tonalIcon(
+                //   onPressed: _pickImage,
+                //   icon: const Icon(Icons.image, size: 20),
+                //   label: const SizedBox.shrink(),
+                //   style: FilledButton.styleFrom(
+                //     padding: const EdgeInsets.all(12),
+                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                //   ),
+                // ),
+                // const SizedBox(width: 8),
+                // FilledButton.tonalIcon(
+                //   onPressed: _pickFile,
+                //   icon: const Icon(Icons.keyboard_voice, size: 20),
+                //   label: const SizedBox.shrink(),
+                //   style: FilledButton.styleFrom(
+                //     padding: const EdgeInsets.all(12),
+                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                //   ),
+                // ),
+                // const SizedBox(width: 8),
+                // FilledButton.tonalIcon(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.remove_red_eye, size: 20),
+                //   label: const SizedBox.shrink(),
+                //   style: FilledButton.styleFrom(
+                //     padding: const EdgeInsets.all(12),
+                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                //   ),
+                // ),
+                // const SizedBox(width: 8),
                 FilledButton.tonalIcon(
                   onPressed: () => courseProvider.removeFlashcard(widget.index),
                   icon: const Icon(Icons.delete, size: 20, color: Colors.redAccent),

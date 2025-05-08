@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizlet/screens/create_screen.dart';
+import 'package:flutter_quizlet/screens/create_course_screen.dart';
 import 'package:flutter_quizlet/screens/history_screen.dart';
 import 'package:flutter_quizlet/screens/home_screen.dart';
 import 'package:flutter_quizlet/screens/your_library_screen.dart';
@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screenOptions = [
     const HomeScreen(),
-    const CreateScreen(),
+    const CreateCourseScreen(),
     const YourLibraryScreen(),
     const HistoryScreen(),
   ];
