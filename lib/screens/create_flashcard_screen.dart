@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/models/flashcard_model.dart';
 import 'package:flutter_quizlet/providers/create_course_provider.dart';
 import 'package:flutter_quizlet/widgets/flashcard_item.dart';

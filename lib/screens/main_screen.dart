@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizlet/screens/create_course_screen.dart';
 import 'package:flutter_quizlet/screens/create_screen.dart';
 import 'package:flutter_quizlet/screens/history_screen.dart';
 import 'package:flutter_quizlet/screens/home_screen.dart';
