@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
+import 'package:flutter_quizlet/providers/history_provider.dart';
+import 'package:provider/provider.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final CourseModel course;
@@ -10,8 +12,7 @@ class CourseDetailsScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _CourseDetailsScreenState();
 }
 
-class _CourseDetailsScreenState
-    extends State<CourseDetailsScreen> {
+class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.8);
   int _currentPage = 0;
   Map<int, FlipCardController> _flipControllers = {};
@@ -19,7 +20,7 @@ class _CourseDetailsScreenState
   @override
   void initState() {
     super.initState();
-
+    Provider.of<HistoryProvider>(context, listen: false).createHistory(widget.course.id);
     for (int i = 0; i < widget.course.flashcards.length; i++) {
       _flipControllers[i] = FlipCardController();
     }
@@ -42,10 +43,7 @@ class _CourseDetailsScreenState
     final flashcards = widget.course.flashcards;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Course Details'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('Course Details'), centerTitle: true),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,7 +62,7 @@ class _CourseDetailsScreenState
                   ),
                 ),
                 Text(
-                  '$_currentPage / ${flashcards.length}',
+                  '${_currentPage + 1} / ${flashcards.length}',
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                 ),
               ],

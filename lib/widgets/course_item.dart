@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/models/custom_user.dart';
 import 'package:flutter_quizlet/providers/user_provider.dart';
-import 'package:flutter_quizlet/util/category_icons.dart';
+import 'package:flutter_quizlet/screens/course_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class CourseItem extends StatefulWidget {
@@ -37,43 +37,49 @@ class _CourseItemState extends State<CourseItem> {
 
   @override
   Widget build(BuildContext context) {
-    final course = widget.course;
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    course.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 25,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-
-                  Row(
-                    children: [
-                      Text(
-                        '${course.flashcards.length} flashcards',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey.shade700,
-                        ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CourseDetailsScreen(course: widget.course),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.cyan, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.cyan.shade100,
+        child: Container(
+          width: double.infinity,
+          height: 250,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 4,
+                  children: [
+                    Text(
+                      widget.course.title,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '•',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      maxLines: 2,
+                    ),
+                    Text(
+                      '${widget.course.flashcards.length} terms',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                       const SizedBox(width: 8),
                       Text(

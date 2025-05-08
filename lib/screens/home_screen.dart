@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                           builder:
                               (context) =>
-                                  SearchCourseScreen(searchKeyword: null),
+                                  SearchCourseScreen(),
                         ),
                       );
                     },
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                           builder:
                               (context) =>
-                                  SearchCourseScreen(searchKeyword: null),
+                                  SearchCourseScreen(category: 'Languages',),
                         ),
                       );
                     },
@@ -289,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                           builder:
                               (context) =>
-                                  SearchCourseScreen(searchKeyword: null),
+                                  SearchCourseScreen(category: "Science",),
                         ),
                       );
                     },
@@ -307,23 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: scienceCourses.length,
                 itemBuilder: (context, index) {
                   final course = scienceCourses[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => CourseDetailsScreen(course: course),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: CourseItem(
-                        course: course,
-                      ), // Dùng custom widget bạn đã viết
-                    ),
-                  );
+                  return CourseItem(course: course,);
                 },
               ),
             ),
@@ -356,9 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => SearchCourseScreen(
-                                    searchKeyword: category,
-                                  ),
+                                  (context) =>
+                                      SearchCourseScreen(category: category,),
                             ),
                           );
                         },

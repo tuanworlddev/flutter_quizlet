@@ -20,6 +20,18 @@ class CourseService {
     }
   }
 
+  Future<CourseModel?> getCourseById(String courseId) async {
+    try {
+      final ref = await _firestore.collection("courses").doc(courseId).get();
+      if (ref.exists) {
+        return CourseModel.fromMap(ref.data()!);
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Error get course by id: $e');      
+    }
+  }
+
   Stream<List<CourseModel>> streamCourseByUser(String userId) {
     return _firestore
         .collection('courses')

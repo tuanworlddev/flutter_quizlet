@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/firebase_options.dart';
 import 'package:flutter_quizlet/providers/auth_provider.dart';
+import 'package:flutter_quizlet/providers/course_provider.dart';
 import 'package:flutter_quizlet/providers/create_course_provider.dart';
 import 'package:flutter_quizlet/providers/edit_course_provider.dart';
+import 'package:flutter_quizlet/providers/history_provider.dart';
 import 'package:flutter_quizlet/providers/home_provider.dart';
 import 'package:flutter_quizlet/providers/user_provider.dart';
 import 'package:flutter_quizlet/providers/your_library_provider.dart';
@@ -29,6 +31,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => EditCourseProvider()),
         ChangeNotifierProvider(create: (_) => YourLibraryProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
       ],
       child: MyApp(),
     ),
