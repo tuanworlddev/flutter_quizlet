@@ -4,7 +4,6 @@ import 'package:flutter_quizlet/providers/auth_provider.dart';
 import 'package:flutter_quizlet/providers/home_provider.dart';
 import 'package:flutter_quizlet/screens/course_details_screen.dart';
 import 'package:flutter_quizlet/screens/search_course_screen.dart';
-import 'package:flutter_quizlet/screens/your_library_screen.dart';
 import 'package:flutter_quizlet/util/category_icons.dart';
 import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:provider/provider.dart';
