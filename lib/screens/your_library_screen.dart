@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quizlet/util/category_icons.dart';
+import 'package:flutter_quizlet/providers/your_library_provider.dart';
+import 'package:flutter_quizlet/screens/your_flashcard_preview_screen.dart';
+import 'package:provider/provider.dart';
+
+final List<String> categories = [
+  'Languages',
+  'Science',
+  'Arts and Humanities',
+  'Maths',
+  'Social sciences',
+  'General',
+];
 
 class YourLibraryScreen extends StatefulWidget {
   const YourLibraryScreen({super.key});
@@ -8,39 +19,37 @@ class YourLibraryScreen extends StatefulWidget {
   State<YourLibraryScreen> createState() => _YourLibraryScreenState();
 }
 
-class _YourLibraryScreenState extends State<YourLibraryScreen> {
-  final List<Map<String, dynamic>> _flashcardSets = [
-    {
-      'title': 'Basic English',
-      'category': 'language',
-      'cardCount': 20,
-    },
-    {
-      'title': 'Algebra',
-      'category': 'math',
-      'cardCount': 15,
-    },
-    {
-      'title': 'Flutter Widgets',
-      'category': 'code',
-      'cardCount': 12,
-    },
-    {
-      'title': 'Physics Basics',
-      'category': 'science',
-      'cardCount': 18,
-    },
-  ];
-
+class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTickerProviderStateMixin {
   String _searchQuery = '';
+  late TabController _tabController;
+  String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<YourLibraryProvider>(context, listen: false).feachYourCourse();
+    _tabController = TabController(length: categories.length + 1, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _selectedCategory = _tabController.index == 0 ? null : categories[_tabController.index - 1];
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredList = _flashcardSets.where((set) {
-      return set['title']
-          .toString()
-          .toLowerCase()
-          .contains(_searchQuery.toLowerCase());
+    final YourLibraryProvider provider = Provider.of<YourLibraryProvider>(context);
+
+    final filteredList = provider.courses.where((course) {
+      final matchesSearch = course.title.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesCategory = _selectedCategory == null || course.category == _selectedCategory;
+      return matchesSearch && matchesCategory;
     }).toList();
 
     return Scaffold(
@@ -52,8 +61,10 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> {
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search flashcards...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -63,27 +74,44 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> {
             ),
             const SizedBox(height: 20),
 
-            // 📋 List of sets
+            // 📑 TabBar
+            TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              labelColor: Theme.of(context).primaryColor,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Theme.of(context).primaryColor,
+              tabs: [
+                const Tab(text: 'All'),
+                ...categories.map((category) => Tab(text: category)),
+              ],
+            ),
+            const SizedBox(height: 20),
+
             Expanded(
-              child: ListView.builder(
+              child: filteredList.isEmpty ? Center(child: Text('Course is empty', style: TextStyle(color: Colors.grey),),) : ListView.builder(
                 itemCount: filteredList.length,
                 itemBuilder: (context, index) {
-                  final set = filteredList[index];
+                  final course = filteredList[index];
                   return Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     elevation: 3,
                     margin: const EdgeInsets.only(bottom: 12),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.blue.shade50,
-                        child: Icon(getCategoryIcon(set['category']), color: Colors.blue),
-                      ),
-                      title: Text(set['title']),
+                      title: Text(course.title),
                       subtitle: Text(
-                          '${getCategoryName(set['category'])} • ${set['cardCount']} cards'),
-                      trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        '${course.category} • ${course.flashcards.length} cards',
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
-                        // TODO: Navigate to detail page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => YourFlashcardPreviewScreen(course: course),
+                          ),
+                        );
                       },
                     ),
                   );

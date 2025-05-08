@@ -11,4 +11,31 @@ class CourseService {
       throw Exception('Failed to create course: $e');
     }
   }
+
+  Stream<List<CourseModel>> streamCourseByUser(String userId) {
+    return _firestore
+        .collection('courses')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => CourseModel.fromMap(doc.data()))
+                  .toList(),
+        );
+  }
+
+  Stream<List<CourseModel>> streamAllCourses() {
+    return _firestore
+        .collection('courses')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => CourseModel.fromMap(doc.data()))
+                  .toList(),
+        );
+  }
 }

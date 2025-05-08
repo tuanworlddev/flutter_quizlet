@@ -43,7 +43,8 @@ class _CreateFlashcardScreenState extends State<CreateFlashcardScreen> {
       setState(() {
         _isUploading = false;
       });
-      Navigator.pushReplacementNamed(context, '/main');
+      Navigator.pop(context);
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(
         context,

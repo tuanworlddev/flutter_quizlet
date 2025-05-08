@@ -84,14 +84,34 @@ class CreateCourseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createCourse(String id, String title, String category, String description)  async {
-    final User? currentUser = await _authService.getCurrentUser();
-    if (currentUser == null) return;
+  Future<void> createCourse(
+    String id,
+    String title,
+    String category,
+    String description,
+  ) async {
+    try {
+      final User? currentUser = await _authService.getCurrentUser();
+      if (currentUser == null) return;
 
-    await _uploadFiles();
+      await _uploadFiles();
 
-    CourseModel course = CourseModel(id: id, userId: currentUser.uid, title: title, category: category, description: description, createdAt: DateTime.now(), flashcards: _flashcards);
+      CourseModel course = CourseModel(
+        id: id,
+        userId: currentUser.uid,
+        title: title,
+        category: category,
+        description: description,
+        createdAt: DateTime.now(),
+        flashcards: _flashcards,
+      );
 
-    await _courseService.createCourse(course);
+      await _courseService.createCourse(course);
+
+      _flashcards.clear();
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 }
