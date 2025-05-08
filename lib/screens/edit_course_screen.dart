@@ -117,20 +117,4 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
     );
   }
 
-  Widget buildEditFlashcard(FlashcardModel flashcard) {
-    final _frontController = TextEditingController();
-    final _backController = TextEditingController();
-
-    return Card(
-      elevation: 4,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 16,
-          children: [TextField()],
-        ),
-      ),
-    );
-  }
 }
