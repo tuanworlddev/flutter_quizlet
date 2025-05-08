@@ -6,7 +6,7 @@ class HomeProvider with ChangeNotifier {
   final CourseService _courseService = CourseService();
   List<CourseModel> _courses = [];
 
-  List<CourseModel> get course => _courses;
+  List<CourseModel> get courses => _courses;
 
   void streamCourses() {
     _courseService.streamAllCourses().listen((courses) {

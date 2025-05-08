@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/models/category.dart';
-import 'package:flutter_quizlet/providers/your_library_provider.dart';
-import 'package:flutter_quizlet/screens/your_flashcard_preview_screen.dart';
+import 'package:flutter_quizlet/providers/home_provider.dart';
+import 'package:flutter_quizlet/screens/course_details_screen.dart';
+import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:provider/provider.dart';
 
-class YourLibraryScreen extends StatefulWidget {
-  const YourLibraryScreen({super.key});
+class SearchCourseScreen extends StatefulWidget {
+  final String? searchKeyword;
+  const SearchCourseScreen({ super.key, required this.searchKeyword });
 
   @override
-  State<YourLibraryScreen> createState() => _YourLibraryScreenState();
+  State<StatefulWidget> createState() => _SearchCourseScreenState();
 }
 
-class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTickerProviderStateMixin {
+class _SearchCourseScreenState extends State<SearchCourseScreen> with SingleTickerProviderStateMixin {
+  final _searchController = TextEditingController();
   String _searchQuery = '';
   late TabController _tabController;
   String? _selectedCategory;
@@ -19,7 +22,11 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    Provider.of<YourLibraryProvider>(context, listen: false).feachYourCourse();
+    Provider.of<HomeProvider>(context, listen: false).streamCourses();
+    if (widget.searchKeyword != null) {
+      _searchQuery = widget.searchKeyword!;
+      _searchController.text = widget.searchKeyword!;
+    }
     _tabController = TabController(length: categories.length + 1, vsync: this);
     _tabController.addListener(() {
       setState(() {
@@ -30,13 +37,14 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTicker
 
   @override
   void dispose() {
+    _searchController.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final YourLibraryProvider provider = Provider.of<YourLibraryProvider>(context);
+    final HomeProvider provider = Provider.of<HomeProvider>(context);
 
     final filteredList = provider.courses.where((course) {
       final matchesSearch = course.title.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -51,6 +59,7 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTicker
           children: [
             // 🔍 Search bar
             TextField(
+              controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search flashcards...',
                 prefixIcon: const Icon(Icons.search),
@@ -85,28 +94,23 @@ class _YourLibraryScreenState extends State<YourLibraryScreen> with SingleTicker
                 itemCount: filteredList.length,
                 itemBuilder: (context, index) {
                   final course = filteredList[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => CourseDetailsScreen(course: course),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: CourseItem(
+                        course: course,
+                      ), // Dùng custom widget bạn đã viết
                     ),
-                    elevation: 3,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: ListTile(
-                      title: Text(course.title),
-                      subtitle: Text(
-                        '${course.category} • ${course.flashcards.length} cards',
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => YourFlashcardPreviewScreen(course: course),
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                  ); 
                 },
               ),
             ),
