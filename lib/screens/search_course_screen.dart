@@ -5,6 +5,7 @@ import 'package:flutter_quizlet/screens/course_details_screen.dart';
 import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class SearchCourseScreen extends StatefulWidget {
   String? searchKeyword;
   String? category;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/providers/history_provider.dart';
+import 'package:flutter_quizlet/screens/learn_screen.dart';
 import 'package:provider/provider.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
@@ -122,7 +123,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LearnScreen(course: course),
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.lightbulb_outline),
                     label: const Text('Learn'),
                     style: ElevatedButton.styleFrom(
