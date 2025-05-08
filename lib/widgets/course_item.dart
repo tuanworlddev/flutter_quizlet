@@ -37,117 +37,91 @@ class _CourseItemState extends State<CourseItem> {
 
   @override
   Widget build(BuildContext context) {
+    final course = widget.course;
+    final avatar = _user?.photoURL ??
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnCj60zcZPmoHzt4YFKnxfaSCAO_bwXNjskiDX_ahOHXoJnqL8B6MUtddnul2cMpyBoWM&usqp=CAU';
+    final displayName =
+        _user?.displayName.isNotEmpty == true ? _user!.displayName : 'User Quizlet';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailsScreen(course: widget.course),
+            builder: (context) => CourseDetailsScreen(course: course),
           ),
         );
       },
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.cyan, width: 2),
+          side: const BorderSide(color: Colors.cyan, width: 1.5),
           borderRadius: BorderRadius.circular(12),
         ),
-        color: Colors.cyan.shade100,
-        child: Container(
-          width: double.infinity,
-          height: 250,
+        color: Colors.cyan.shade50,
+        child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 4,
-                  children: [
-                    Text(
-                      widget.course.title,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
+              // 📘 Title
+              Text(
+                course.title,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 6),
+
+              // 📊 Term count + category
+              Row(
+                children: [
+                  Text(
+                    '${course.flashcards.length} terms',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
                     ),
-                    Text(
-                      '${widget.course.flashcards.length} terms',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        course.category,
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey.shade700,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
                   ),
-
-                  const SizedBox(height: 30),
-
-                  if (_user != null)
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundImage:
-                              _user != null && _user!.photoURL != null
-                                  ? NetworkImage(_user!.photoURL!)
-                                  : const NetworkImage(
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnCj60zcZPmoHzt4YFKnxfaSCAO_bwXNjskiDX_ahOHXoJnqL8B6MUtddnul2cMpyBoWM&usqp=CAU',
-                                  ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _user!.displayName.isNotEmpty
-                                ? _user!.displayName
-                                : 'User Quizlet',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundImage: const NetworkImage(
-                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnCj60zcZPmoHzt4YFKnxfaSCAO_bwXNjskiDX_ahOHXoJnqL8B6MUtddnul2cMpyBoWM&usqp=CAU',
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Expanded(
-                          child: Text(
-                            'User Quizlet',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(width: 10),
+                  Text(
+                    course.category,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                      fontStyle: FontStyle.italic,
                     ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+
+              // 👤 User Info
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 14,
+                    backgroundImage: NetworkImage(avatar),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      displayName,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
