@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
+import 'package:flutter_quizlet/models/custom_user.dart';
 import 'package:flutter_quizlet/providers/history_provider.dart';
+import 'package:flutter_quizlet/providers/user_provider.dart';
 import 'package:flutter_quizlet/screens/test_screen.dart';
 import 'package:flutter_quizlet/services/test_service.dart';
 import 'package:flutter_quizlet/screens/learn_screen.dart';
@@ -20,10 +22,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.85);
   int _currentPage = 0;
   late Map<int, FlipCardController> _flipControllers;
+  CustomUser? _user;
 
   @override
   void initState() {
     super.initState();
+    _fetchUser();
     Provider.of<HistoryProvider>(context, listen: false).createHistory(widget.course.id);
     _flipControllers = {
       for (int i = 0; i < widget.course.flashcards.length; i++)
@@ -35,6 +39,18 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         _currentPage = _pageController.page?.round() ?? 0;
       });
     });
+  }
+
+  void _fetchUser() async {
+    final user = await Provider.of<UserProvider>(
+      context,
+      listen: false,
+    ).getUserById(widget.course.userId);
+    if (mounted && user != null) {
+      setState(() {
+        _user = user;
+      });
+    }
   }
 
   void _showQuestionCountDialog() {
@@ -151,12 +167,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage('https://avatar.iran.liara.run/public/24'),
+                  backgroundImage: NetworkImage(_user != null && _user!.photoURL != null ? _user!.photoURL! : 'https://avatar.iran.liara.run/public/24'),
                 ),
                 const SizedBox(width: 10),
-                 Text('User Quizlet', style: TextStyle(fontWeight: FontWeight.bold)),
+                 Text(_user != null ? _user!.displayName : 'User Quizlet', style: TextStyle(fontWeight: FontWeight.bold)),
                 const Spacer(),
                 
               ],
