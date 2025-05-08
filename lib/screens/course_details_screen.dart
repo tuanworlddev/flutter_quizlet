@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/providers/history_provider.dart';
+import 'package:flutter_quizlet/screens/test_screen.dart';
+import 'package:flutter_quizlet/services/test_service.dart';
 import 'package:provider/provider.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class CourseDetailsScreen extends StatefulWidget {
 }
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
+  final TestService _testService = TestService();
   final PageController _pageController = PageController(viewportFraction: 0.85);
   int _currentPage = 0;
   late Map<int, FlipCardController> _flipControllers;
@@ -31,6 +34,58 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         _currentPage = _pageController.page?.round() ?? 0;
       });
     });
+  }
+
+  void _showQuestionCountDialog() {
+    final TextEditingController _controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enter number of questions'),
+        content: TextField(
+          controller: _controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: '(Maximum questions: ${widget.course.flashcards.length})',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final input = int.tryParse(_controller.text);
+              if (input != null && input > 0 && input <= widget.course.flashcards.length) {
+                try {
+                  final test = await _testService.generateTestForCourse(
+                    widget.course,
+                    questionCount: input,
+                  );
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TestScreen(test: test),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a valid number')),
+                );
+              }
+            },
+            child: const Text('Start'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -137,7 +192,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: _showQuestionCountDialog,
                     icon: const Icon(Icons.quiz_outlined),
                     label: const Text('Test'),
                     style: ElevatedButton.styleFrom(
