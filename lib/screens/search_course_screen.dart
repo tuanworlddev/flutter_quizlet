@@ -6,14 +6,16 @@ import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:provider/provider.dart';
 
 class SearchCourseScreen extends StatefulWidget {
-  final String? searchKeyword;
-  const SearchCourseScreen({ super.key, required this.searchKeyword });
+  String? searchKeyword;
+  String? category;
+  SearchCourseScreen({super.key, this.searchKeyword, this.category});
 
   @override
   State<StatefulWidget> createState() => _SearchCourseScreenState();
 }
 
-class _SearchCourseScreenState extends State<SearchCourseScreen> with SingleTickerProviderStateMixin {
+class _SearchCourseScreenState extends State<SearchCourseScreen>
+    with SingleTickerProviderStateMixin {
   final _searchController = TextEditingController();
   String _searchQuery = '';
   late TabController _tabController;
@@ -27,10 +29,25 @@ class _SearchCourseScreenState extends State<SearchCourseScreen> with SingleTick
       _searchQuery = widget.searchKeyword!;
       _searchController.text = widget.searchKeyword!;
     }
+
     _tabController = TabController(length: categories.length + 1, vsync: this);
+
+    if (widget.category != null && categories.contains(widget.category)) {
+      final categoryIndex =
+          categories.indexOf(widget.category!) + 1;
+      _tabController.index = categoryIndex;
+      _selectedCategory = widget.category;
+    } else {
+      _tabController.index = 0;
+      _selectedCategory = null;
+    }
+
     _tabController.addListener(() {
       setState(() {
-        _selectedCategory = _tabController.index == 0 ? null : categories[_tabController.index - 1];
+        _selectedCategory =
+            _tabController.index == 0
+                ? null
+                : categories[_tabController.index - 1];
       });
     });
   }
@@ -46,13 +63,21 @@ class _SearchCourseScreenState extends State<SearchCourseScreen> with SingleTick
   Widget build(BuildContext context) {
     final HomeProvider provider = Provider.of<HomeProvider>(context);
 
-    final filteredList = provider.courses.where((course) {
-      final matchesSearch = course.title.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == null || course.category == _selectedCategory;
-      return matchesSearch && matchesCategory;
-    }).toList();
+    final filteredList =
+        provider.courses.where((course) {
+          final matchesSearch = course.title.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
+          final matchesCategory =
+              _selectedCategory == null || course.category == _selectedCategory;
+          return matchesSearch && matchesCategory;
+        }).toList();
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Search Result'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -90,29 +115,40 @@ class _SearchCourseScreenState extends State<SearchCourseScreen> with SingleTick
             const SizedBox(height: 20),
 
             Expanded(
-              child: filteredList.isEmpty ? Center(child: Text('Course is empty', style: TextStyle(color: Colors.grey),),) : ListView.builder(
-                itemCount: filteredList.length,
-                itemBuilder: (context, index) {
-                  final course = filteredList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => CourseDetailsScreen(course: course),
+              child:
+                  filteredList.isEmpty
+                      ? Center(
+                        child: Text(
+                          'Course is empty',
+                          style: TextStyle(color: Colors.grey),
                         ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: CourseItem(
-                        course: course,
-                      ), // Dùng custom widget bạn đã viết
-                    ),
-                  ); 
-                },
-              ),
+                      )
+                      : ListView.builder(
+                        itemCount: filteredList.length,
+                        itemBuilder: (context, index) {
+                          final course = filteredList[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          CourseDetailsScreen(course: course),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: CourseItem(
+                                course: course,
+                              ), // Dùng custom widget bạn đã viết
+                            ),
+                          );
+                        },
+                      ),
             ),
           ],
         ),

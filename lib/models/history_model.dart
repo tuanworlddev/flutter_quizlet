@@ -1,16 +1,19 @@
-class CourseHistoryModel {
+class HistoryModel {
   final String courseId;
   final DateTime viewedAt;
+  final String userId;
 
-  CourseHistoryModel({
+  HistoryModel({
     required this.courseId,
     required this.viewedAt,
+    required this.userId,
   });
 
-  factory CourseHistoryModel.fromMap(Map<String, dynamic> map) {
-    return CourseHistoryModel(
+  factory HistoryModel.fromMap(Map<String, dynamic> map) {
+    return HistoryModel(
       courseId: map['courseId'],
       viewedAt: DateTime.parse(map['viewedAt']),
+      userId: map['userId']
     );
   }
 
@@ -18,6 +21,7 @@ class CourseHistoryModel {
     return {
       'courseId': courseId,
       'viewedAt': viewedAt.toIso8601String(),
+      'userId': userId
     };
   }
 }

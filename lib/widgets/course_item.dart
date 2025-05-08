@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/models/course_model.dart';
 import 'package:flutter_quizlet/models/custom_user.dart';
 import 'package:flutter_quizlet/providers/user_provider.dart';
+import 'package:flutter_quizlet/screens/course_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class CourseItem extends StatefulWidget {
@@ -25,7 +26,7 @@ class _CourseItemState extends State<CourseItem> {
   void _fetchUser() async {
     final user = await Provider.of<UserProvider>(
       context,
-      listen: false
+      listen: false,
     ).getUserById(widget.course.userId);
     if (user != null) {
       setState(() {
@@ -37,6 +38,14 @@ class _CourseItemState extends State<CourseItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CourseDetailsScreen(course: widget.course),
+          ),
+        );
+      },
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -45,6 +54,7 @@ class _CourseItemState extends State<CourseItem> {
         ),
         color: Colors.cyan.shade100,
         child: Container(
+          width: double.infinity,
           height: 250,
           padding: const EdgeInsets.all(16),
           child: Column(
