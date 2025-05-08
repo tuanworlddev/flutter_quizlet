@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quizlet/providers/course_provider.dart';
 import 'package:flutter_quizlet/providers/history_provider.dart';
-import 'package:flutter_quizlet/util/category_icons.dart';
 import 'package:flutter_quizlet/widgets/course_item.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
