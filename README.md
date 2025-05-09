@@ -1,16 +1,48 @@
-# flutter_quizlet
+# QuizApp
 
-A new Flutter project.
+QuizApp is a modern and interactive quiz application inspired by Quizlet. It allows users to create, share, and play quizzes to enhance their learning experience. The app supports multiple platforms, including web, Android, iOS, macOS, and Windows.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- 📚 **Create Quizzes** – Users can create quizzes with various question types.
+- 🔄 **Flashcard Mode** – Learn using digital flashcards.
+- ⏳ **Timed Questions** – Add a challenge by setting time limits for answering questions.
+- 📊 **Performance Tracking** – Track progress and scores.
+- 🌎 **Multiplayer Mode** – Compete with friends in real-time quizzes.
+- ☁️ **Cloud Storage** – Save quizzes and progress using Firebase.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Frontend:** Flutter (Dart)
+- **Backend:** Firebase (Firestore, Authentication, Storage)
+- **Authentication:** Firebase Auth (Google, Email/Password)
+- **State Management:** Provider / Riverpod
+- **Database:** Firebase Firestore
+- **Hosting:** Firebase Hosting
+- **Storage:** Cloudinary (for images)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🔧 Installation
+
+### Prerequisites
+
+- Install [Flutter](https://flutter.dev/docs/get-started/install)
+- Set up Firebase project and get API keys
+- Install dependencies:
+
+```sh
+flutter pub get
+```
+
+### Running the App
+
+```sh
+flutter run
+```
+
+### 🔑 Environment Variables
+Create a **`.env`** file in the root directory follow by the **`.env example`**
+
+## Contributors:
+- [Nguyen Anh Tuan](https://github.com/tuanworlddev)
+- [Phan Minh Gia Huy](https://github.com/huydevpmg)
+- [Le Tang Phu Quy](https://github.com/letangphuquy)
